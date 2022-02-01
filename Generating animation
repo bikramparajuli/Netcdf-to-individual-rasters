@@ -1,0 +1,34 @@
+from netCDF4 import Dataset
+import numpy as np
+import matplotlib.pyplot as plt
+from mpl_toolkits.basemap import Basemap
+
+data = Dataset(r'E:/Thesis/Chapter 1(Precipitation comparison)/netcdf/APHRO_MA_050deg_V1101.2007 (1).nc/APHRO_MA_050deg_V1101.2007.nc')
+
+lats = data.variables['latitude'][:]
+lons = data.variables['longitude'][:]
+time = data.variables['time'][:]
+precipitation = data.variables['precip'][:]
+
+mp = Basemap(projection='merc',
+             llcrnrlon= 35,
+             llcrnrlat= -2,
+             urcrnrlon= 119.365445,
+             urcrnrlat= 45.930419,
+             resolution = 'i')
+lon, lat = np.meshgrid(lons, lats)
+x,y = mp(lon, lat)
+
+days = np.arange(0,365)
+for i in days:
+        
+    c_scheme = mp.pcolor(x, y, np.squeeze(precipitation[i,:,:]), cmap = 'jet')
+    mp.drawstates()
+    mp.drawcountries()
+    cbar = mp.colorbar(c_scheme, location = 'right', pad = '10%')
+    day = i+1
+    plt.title('precipitation on' + str(day) + 'of year 2007')
+    plt.clim(0,200)
+    plt.savefig(r'E:\Thesis\Chapter 1(Precipitation comparison)\netcdf\APHRO_MA_050deg_V1101.2007 (1).nc\jpegs'+'\\'+str(day)+'.jpg')
+    plt.clf()
+    
