@@ -1,0 +1,27 @@
+from netCDF4 import Dataset
+import numpy as np
+import matplotlib.pyplot as plt
+from mpl_toolkits.basemap import Basemap
+
+data = Dataset(r'E:\Thesis\Plotting nc files\CDR_spi_gamma_06.nc')
+
+lats = data.variables['lat'][:]
+lons = data.variables['lon'][:]
+time = data.variables['time'][:]
+precipitation = data.variables['spi_gamma_06'][:]
+
+mp = Basemap(projection='merc',
+             llcrnrlon= 42.8,
+             llcrnrlat= -2,
+             urcrnrlon= 119.365445,
+             urcrnrlat= 45.930419,
+             resolution = 'i')
+lon, lat = np.meshgrid(lons, lats)
+x,y = mp(lon, lat)
+c_scheme = mp.pcolor(x, y, np.squeeze(precipitation[0,:,:]), cmap = 'jet')
+mp.drawcoastlines()
+mp.drawstates()
+mp.drawcountries()
+cbar = mp.colorbar(c_scheme, location = 'right', pad = '10%')
+plt.title = ('precipitation map')
+plt.show()
